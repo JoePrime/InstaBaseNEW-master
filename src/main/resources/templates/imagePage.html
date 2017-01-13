@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Image page</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"/>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+
+    </head>
+    <body class = "container">
+
+        <h1  th:text="${title}"></h1>
+
+        <div th:if="${account.finnish}"> <a href="/">Profiilisivu</a> <br/>
+            Käyttäjän <a th:href="@{/user/{id}/(id=${kuva.account.id})}"> <span th:text="${kuva.account.username}"></span> profiili </a></div>     
+        <br/>
+        <div th:unless="${account.finnish}"> <a href="/">Home</a> <br/>  
+            <a th:href="@{/user/{id}/(id=${kuva.account.id})}"> <span th:text="${kuva.account.username}"></span>'s profile </a></div>     
+
+        <img th:src="@{/image/{id}/content(id=${kuva.id})}"></img><br/>
+        <strong th:text="${kuva.caption}"> </strong>
+        <strong th:each="hashtag : ${hashtags}">
+            <a th:href="@{/hashtag/{id}/(id=${hashtag.id})}" th:text="${hashtag.tag}"> </a>
+        </strong>
+
+        <form th:action="@{/image/{id}/like(id=${kuva.id})}" th:method="POST">
+            <input th:if="${account.finnish}" type="submit" value="Tykkää"/>
+            <input th:unless="${account.finnish}" type="submit" value="Like"/>
+        </form>
+        <div th:if="${account.finnish}"> <span th:text="${numberOfLikes}"> </span> tykkäystä <br/> </div>
+        <div th:unless="${account.finnish}"> <span th:text="${numberOfLikes}"> </span> likes <br/> </div>
+
+        <div th:if="${account.finnish}">  Kirjoita kommentti:<br/>
+            <form th:action="@{/image/{id}/comment(id=${kuva.id})}" method="POST">
+                <input type="text" name="comment"/><br/>
+                <input type="submit" value="Lähetä"/>           
+            </form>
+        </div>
+        <div th:unless="${account.finnish}">Write a comment:<br/>
+            <form th:action="@{/image/{id}/comment(id=${kuva.id})}" method="POST">
+                <input type="text" name="comment"/><br/>
+                <input type="submit" value="Send"/>           
+            </form>
+
+        </div>
+        <ol class="list-style">
+            <li th:each="comment : ${comments}" >
+
+                <span th:text="${comment.content}">name</span>
+                <br/>
+                <a th:href="@{/user/{id}(id=${comment.account.id})}">
+                    <span th:text="${comment.account.username}"></span>
+                </a>
+                <br/>
+            </li>
+        </ol>
+    </body>
+</html>

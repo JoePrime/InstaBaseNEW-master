@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <title>Own page</title>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"/>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap-theme.min.css"/>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+
+    </head>
+    <body class = "container">
+        <div th:if="${account.finnish}">
+            <h1> Profiilisivusi:</h1>
+            <a href="/logout"> Kirjaudu ulos</a>           
+        </div>
+        <div th:unless="${account.finnish}">
+            <h1> Your home page:</h1>
+            <a href="/logout"> Logout</a>           
+        </div>
+
+        <div th:if="${account.finnish}">
+            <form method="POST" th:action="@{/home/{id}/english(id=${account.id})}">
+                <input type="submit" value="English" />
+            </form>
+        </div>
+        <div th:unless="${account.finnish}">  
+            <form method="POST" th:action="@{/home/{id}/finnish(id=${account.id})}">
+                <input type="submit" value="Suomeksi" />
+            </form>
+        </div>
+        <br/>
+        <div th:if="${account.finnish}">
+            <form method="POST" action="/home" enctype="multipart/form-data">
+                <input type="file" name="file" id="file"/>
+                <input type="submit" value="Lisää kuva (PNG/JPG)"/>            
+                <br/>
+                Kuvateksti:
+                <br/>
+                <input type="text" name="caption" id="caption" size = "55"/>
+            </form>
+        </div>
+        <div th:unless="${account.finnish}">
+            <form method="POST" action="/home" enctype="multipart/form-data">
+                <input type="file" name="file" id="file"/>
+                <input type="submit" value="Add image (PNG/JPG)"/>            
+                <br/>
+                Image caption:
+                <br/>
+                <input type="text" name="caption" id="caption" size = "55"/>
+            </form>
+        </div>
+        <ol class="list-unstyled">
+            <li th:each="kuva : ${kuvat}">
+                <a th:href="@{/image/{id}(id=${kuva.id})}">
+                    <img th:src="@{/image/{id}/content(id=${kuva.id})}"></img><br/>
+                </a>
+                <strong th:text="${kuva.caption}"> </strong> <br/>
+                <div th:if="${account.finnish}"><span th:text="${kuva.likes}">likes</span> tykkäystä, <span th:text="${kuva.comments}">kommenttia</span>
+                    <a th:href="@{/image/{id}(id=${kuva.id})}">kommenttia</a></div>
+                <div th:unless="${account.finnish}"><span th:text="${kuva.likes}">likes</span> likes, <span th:text="${kuva.comments}">comments</span>
+                    <a th:href="@{/image/{id}(id=${kuva.id})}">comments</a></div>
+
+                <form th:action="@{/home/{id}(id=${kuva.id})}" th:method="DELETE">
+                    <input type="submit" value="Remove"/>
+                </form><br/>
+            </li>
+        </ol>
+        <div th:if="${account.finnish}">
+            <h3> Instabasen käyttäjät:</h3>       
+        </div>
+        <div th:unless="${account.finnish}">
+            <h3> Instabase users:</h3>       
+        </div>
+        <ol class="list-unstyled">
+            <li th:each="user : ${users}">
+                <a th:href="@{/user/{id}(id=${user.id})}" th:text="${user.username}"> name </a>
+            </li>
+        </ol>
+
+
+    </body>
+</html>
